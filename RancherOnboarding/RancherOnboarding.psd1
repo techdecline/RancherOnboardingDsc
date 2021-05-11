@@ -3,7 +3,7 @@ RootModule = 'RancherOnboarding.psm1'
 DscResourcesToExport = @('RancherOnboarding')
 
 # Version number of this module.
-ModuleVersion = '0.0.2'
+ModuleVersion = '0.0.3'
 
 # ID used to uniquely identify this module
 GUID = '4a991213-3976-4f4d-8ecb-0d1f88cc966a'

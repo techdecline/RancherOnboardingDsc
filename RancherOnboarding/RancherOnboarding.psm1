@@ -59,7 +59,8 @@ class RancherOnboarding {
             }
             "Present" {
                 Write-Verbose "Will add node to rancher"
-                $cmdLine = "docker run -v c:\:c:\host rancher/rancher-agent:v$($this.DesiredRancherAgentVersion) bootstrap --server $($this.RancherUrl) --token $($this.TokenCredential.Password) --ca-checksum $($this.CaChecksum) --worker | iex"
+                $clearPassword = $this.TokenCredential.GetNetworkCredential().Password
+                $cmdLine = "docker run -v c:\:c:\host rancher/rancher-agent:v$($this.DesiredRancherAgentVersion) bootstrap --server $($this.RancherUrl) --token $($clearPassword) --ca-checksum $($this.CaChecksum) --worker | iex"
                 Write-Verbose "Rancher Onboarding Command will be: $cmdLine" 
                 Invoke-Expression -Command $cmdLine
             }
