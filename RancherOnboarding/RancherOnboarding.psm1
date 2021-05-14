@@ -26,6 +26,9 @@ class RancherOnboarding {
     [DscProperty(Mandatory)]
     [String]$CaChecksum
 
+    [DscProperty(Mandatory=$false)]
+    [hashtable]$Label
+
     # Gets the resource's current state.
     [RancherOnboarding] Get() {
         try {
@@ -60,9 +63,15 @@ class RancherOnboarding {
             "Present" {
                 Write-Verbose "Will add node to rancher"
                 $clearPassword = $this.TokenCredential.GetNetworkCredential().Password
-                $cmdLine = "docker run -v c:\:c:\host rancher/rancher-agent:v$($this.DesiredRancherAgentVersion) bootstrap --server $($this.RancherUrl) --token $($clearPassword) --ca-checksum $($this.CaChecksum) --worker | iex"
-                Write-Verbose "Rancher Onboarding Command will be: $cmdLine" 
-                Invoke-Expression -Command $cmdLine
+                $cmdLine = "run -v c:\:c:\host rancher/rancher-agent:v$($this.DesiredRancherAgentVersion) bootstrap --server $($this.RancherUrl) --token $($clearPassword) --ca-checksum $($this.CaChecksum) --worker"
+                if ($this.Label) {
+                    $this.Label.GetEnumerator() | ForEach-Object {
+                        Write-Verbose "Adding Label to docker command: $($_.Key)"
+                        $cmdLine = $cmdLine + "--label " + $_.key + "=" + $_.Value
+                    }
+                }
+                Write-Verbose "Rancher Onboarding Arguments will be: $cmdLine" 
+                Start-Process -FilePath (get-command docker.exe).Source -ArgumentList $cmdLine -Wait -NoNewWindow
             }
         }
     }
