@@ -63,14 +63,20 @@ class RancherOnboarding {
             "Present" {
                 Write-Verbose "Will add node to rancher"
                 $clearPassword = $this.TokenCredential.GetNetworkCredential().Password
-                $cmdLine = "run -v c:\:c:\host rancher/rancher-agent:v$($this.DesiredRancherAgentVersion) bootstrap --server $($this.RancherUrl) --token $($clearPassword) --ca-checksum $($this.CaChecksum) --worker"
+                $containerPullArgs = "pull rancher/rancher-agent:v$($this.DesiredRancherAgentVersion)"
+                $cmdLine = "docker run -v c:\:c:\host rancher/rancher-agent:v$($this.DesiredRancherAgentVersion) bootstrap --server $($this.RancherUrl) --token $($clearPassword) --ca-checksum $($this.CaChecksum) --worker"
                 $this.Label | ForEach-Object {
                     Write-Verbose "Adding Label: $_"
                     $cmdLine = $cmdLine + " --label $_"
                 }
+                Write-Verbose "Appending iex to run command"
+                $cmdLine = $cmdLine + ' | invoke-expression'
+                $cmdLine
+                Write-Verbose "Pulling container rancher-agent"
+                Start-Process -FilePath (get-command docker.exe).Source -ArgumentList $containerPullArgs -Wait -NoNewWindow
                 
-                Write-Verbose "Rancher Onboarding Arguments will be: $cmdLine" 
-                Start-Process -FilePath (get-command docker.exe).Source -ArgumentList $cmdLine -Wait -NoNewWindow
+                Write-Verbose "Rancher Onboarding Command will be: $cmdLine" 
+                Invoke-Expression -Command $cmdLine
             }
         }
     }
