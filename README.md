@@ -12,7 +12,7 @@ Powershell DSC Resource for onboarding Windows Server System into Rancher
 |DockerName|NotConfigurable|String|Name of currently installed Docker Runtime||
 |Ensure|Write|String|Desired State|Absent,Present|
 |ConfiguredRancherAgentVersion|Write|String|Current Rancher Agent Version||
-|Label|Write|Hashtable|Labels to add to the container||
+|Label|Write|string[]|Labels to add to the container||
 
 ### Description
 Powershell DSC Resource for onboarding Windows Server System into Rancher
